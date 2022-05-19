@@ -47,6 +47,17 @@ public:
 	 * @see URI for details about accepted protocols and URI formats.
 	 */
 	URI resource;
+	
+	/**
+	* Pixels to crop at left
+	* Pixels to crop at right
+	* Pixels to crop at top
+	* Pixels to crop at bottom
+	*/
+	uint32_t left;
+	uint32_t right;
+	uint32_t top;
+	uint32_t bottom;
 
 	/**
 	 * The width of the stream (in pixels).
