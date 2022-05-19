@@ -97,6 +97,7 @@ gstDecoder::gstDecoder( const videoOptions& options ) : videoSource(options)
 	mBus        = NULL;
 	mPipeline   = NULL;
 	mCustomSize = false;
+	mCustomCrop = false;
 	mCustomRate = false;
 	mEOS        = false;
 	mLoopCount  = 1;
@@ -189,6 +190,9 @@ bool gstDecoder::init()
 	// flag if the user wants a specific resolution and framerate
 	if( mOptions.width != 0 || mOptions.height != 0 )
 		mCustomSize = true;
+
+	if( mOptions.left != 0 || mOptions.top != 0 )
+		mCustomCrop = true;
 
 	if( mOptions.frameRate != 0 )
 		mCustomRate = true;
@@ -379,6 +383,11 @@ bool gstDecoder::discover()
 
 	if( mOptions.height == 0 )
 		mOptions.height = height;
+	
+	if( mCustomCrop ) {
+		mOptions.right = width;
+		mOptions.bottom = height;
+	}
 	
 	// confirm the desired framerate against what the stream provides
 	if( mCustomRate )
@@ -587,9 +596,12 @@ bool gstDecoder::buildLaunchStr()
 	}
 
 	// resize if requested
-	if( mCustomSize || mOptions.flipMethod != videoOptions::FLIP_NONE )
+	if( mCustomSize || mCustomCrop || mOptions.flipMethod != videoOptions::FLIP_NONE )
 	{
-		ss << "nvvidconv";
+		if ( mCustomCrop )
+			ss << "nvvidconv left=" << mOptions.left << " right=" << mOptions.right << " top=" << mOptions.top << " bottom=" << mOptions.bottom;
+		else
+			ss << "nvvidconv";
 
 		if( mOptions.flipMethod != videoOptions::FLIP_NONE )
 			ss << " flip-method=" << (int)mOptions.flipMethod;
