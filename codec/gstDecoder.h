@@ -150,6 +150,7 @@ protected:
 	Event	   mWaitEvent;
 	std::string  mLaunchStr;
 	bool         mCustomSize;
+	bool         mCustomCrop;
 	bool		   mCustomRate;
 	bool         mEOS;
 	size_t	   mLoopCount;
